@@ -44,14 +44,22 @@ public class ProductController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(createdProduct);
 	}
 
+	@Operation(summary = "Get all products", description = "Retrieves all products")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "Products retrieved successfully", content = @Content(schema = @Schema(implementation = Product.class))) })
 	@GetMapping("/getAllProducts")
 	public ResponseEntity<List<Product>> getAllProducts() {
 		List<Product> products = productService.getAllProducts();
 		return ResponseEntity.status(200).body(products);
 	}
 
+	@Operation(summary = "Get product by ID", description = "Retrieves a product by its ID")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "Product found", content = @Content(schema = @Schema(implementation = Product.class))),
+			@ApiResponse(responseCode = "404", description = "Product not found") })
 	@GetMapping("/getProduct/{id}")
-	public ResponseEntity<Product> getProductById(@PathVariable Integer id) {
+	public ResponseEntity<Product> getProductById(
+			@Parameter(description = "ID of the product to retrieve", required = true) @PathVariable Integer id) {
 		Product product = productService.getProductById(id);
 		org.springframework.http.HttpHeaders headers = new org.springframework.http.HttpHeaders();
 		headers.add("new-header", "application/json");
@@ -62,8 +70,14 @@ public class ProductController {
 		}
 	}
 
+	@Operation(summary = "Update product", description = "Updates an existing product by ID")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "Product updated successfully", content = @Content(schema = @Schema(implementation = Product.class))),
+			@ApiResponse(responseCode = "404", description = "Product Id not found!!") })
 	@PutMapping("/editProduct/{id}")
-	public ResponseEntity<?> updateProduct(@PathVariable Integer id, @RequestBody Product product) {
+	public ResponseEntity<?> updateProduct(
+			@Parameter(description = "ID of the product to update", required = true) @PathVariable Integer id,
+			@Parameter(description = "Updated product object", required = true) @RequestBody Product product) {
 		Product updatedProduct = productService.updateProduct(id, product);
 		if (updatedProduct != null) {
 			return ResponseEntity.ok(updatedProduct);
@@ -72,8 +86,12 @@ public class ProductController {
 		}
 	}
 
+	@Operation(summary = "Delete product", description = "Deletes a product by its ID")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Product deleted successfully"),
+			@ApiResponse(responseCode = "404", description = "Product Id not found!!") })
 	@DeleteMapping("/deleteProduct/{id}")
-	public ResponseEntity<String> deleteProduct(@PathVariable Integer id) {
+	public ResponseEntity<String> deleteProduct(
+			@Parameter(description = "ID of the product to delete", required = true) @PathVariable Integer id) {
 		productService.deleteProduct(id);
 		return ResponseEntity.status(HttpStatus.OK).body("Deletion request accepted.");
 	}
