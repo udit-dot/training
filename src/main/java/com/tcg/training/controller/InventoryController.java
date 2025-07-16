@@ -1,6 +1,7 @@
 package com.tcg.training.controller;
 
 import com.tcg.training.entity.Inventory;
+import com.tcg.training.projection.LocQuanAndProdNameInvProjection;
 import com.tcg.training.service.InventoryService;
 import com.tcg.training.dto.InventorySummaryDTO;
 import com.tcg.training.dto.InventoryReportDTO;
@@ -154,6 +155,26 @@ public class InventoryController {
 	public ResponseEntity<List<InventoryReportDTO>> getInventoryReportWithMinQuantity(
 			@Parameter(description = "Minimum quantity", required = true) @PathVariable int minQty) {
 		List<InventoryReportDTO> report = inventoryService.getInventoryReportWithMinQuantity(minQty);
+		return ResponseEntity.ok(report);
+	}
+	
+	@Operation(summary = "Get inventory report only with location and quantity by product id", description = "Retrieves inventory report for items with only location and quantity By Product Id")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "Inventory report found", content = @Content(schema = @Schema(implementation = Inventory.class))) })
+	@GetMapping("/report/location-quantity/{id}")
+	public ResponseEntity<List<Inventory>> getInventoryReportWithOnlyLocationAndQuantity(
+			@Parameter(description = "Minimum quantity", required = true) @PathVariable Long id) {
+		List<Inventory> report = inventoryService.getInventoryLocAndQuanByProductId(id);
+		return ResponseEntity.ok(report);
+	}
+	
+	@Operation(summary = "Get inventory report only with location, quantity and product name By Product Id", description = "Retrieves inventory report for items with only location, quantity and product name by product id")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "Inventory report found", content = @Content(schema = @Schema(implementation = LocQuanAndProdNameInvProjection.class))) })
+	@GetMapping("/report/location-quantity-name/{id}")
+	public ResponseEntity<List<LocQuanAndProdNameInvProjection>> getInventoryReportWithOnlyLocQuanAndProdName(
+			@Parameter(description = "Minimum quantity", required = true) @PathVariable Long id) {
+		List<LocQuanAndProdNameInvProjection> report = inventoryService.getInventoryLocQuanAndProdNameByProdId(id);
 		return ResponseEntity.ok(report);
 	}
 }
