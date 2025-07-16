@@ -1,5 +1,6 @@
 package com.tcg.training.controller.example;
 
+import com.tcg.training.dto.CourseDTO;
 import com.tcg.training.entity.example.Course;
 import com.tcg.training.service.example.CourseService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -26,8 +27,8 @@ public class CourseController {
   @ApiResponses(value = {
       @ApiResponse(responseCode = "201", description = "Course created successfully", content = @Content(schema = @Schema(implementation = Course.class))) })
   @PostMapping
-  public ResponseEntity<Course> createCourse(@RequestBody Course course) {
-    Course created = courseService.createCourse(course);
+  public ResponseEntity<Course> createCourse(@RequestBody CourseDTO courseDTO) {
+    Course created = courseService.createCourse(courseDTO);
     return ResponseEntity.status(201).body(created);
   }
 

@@ -1,5 +1,6 @@
 package com.tcg.training.controller.example;
 
+import com.tcg.training.dto.StudentDTO;
 import com.tcg.training.entity.example.Student;
 import com.tcg.training.service.example.StudentService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -26,8 +27,8 @@ public class StudentController {
   @ApiResponses(value = {
       @ApiResponse(responseCode = "201", description = "Student created successfully", content = @Content(schema = @Schema(implementation = Student.class))) })
   @PostMapping
-  public ResponseEntity<Student> createStudent(@RequestBody Student student) {
-    Student created = studentService.createStudent(student);
+  public ResponseEntity<Student> createStudent(@RequestBody StudentDTO studentDTO) {
+    Student created = studentService.createStudent(studentDTO);
     return ResponseEntity.status(201).body(created);
   }
 
@@ -58,10 +59,10 @@ public class StudentController {
   @ApiResponses(value = {
       @ApiResponse(responseCode = "200", description = "Student updated", content = @Content(schema = @Schema(implementation = Student.class))),
       @ApiResponse(responseCode = "404", description = "Student not found") })
-  @PutMapping("/{id}")
+  @PutMapping(value = "/{id}", consumes = "application/json")
   public ResponseEntity<Student> updateStudent(
-      @Parameter(description = "Student ID", required = true) @PathVariable Long id, @RequestBody Student student) {
-    Student updated = studentService.updateStudent(id, student);
+      @Parameter(description = "Student ID", required = true) @PathVariable Long id, @RequestBody StudentDTO studentDTO) {
+    Student updated = studentService.updateStudent(id, studentDTO);
     if (updated != null) {
       return ResponseEntity.ok(updated);
     } else {

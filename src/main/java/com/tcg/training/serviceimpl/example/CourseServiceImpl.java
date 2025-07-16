@@ -1,5 +1,6 @@
 package com.tcg.training.serviceimpl.example;
 
+import com.tcg.training.dto.CourseDTO;
 import com.tcg.training.entity.example.Course;
 import com.tcg.training.repository.example.CourseRepository;
 import com.tcg.training.service.example.CourseService;
@@ -15,7 +16,9 @@ public class CourseServiceImpl implements CourseService {
   private CourseRepository courseRepository;
 
   @Override
-  public Course createCourse(Course course) {
+  public Course createCourse(CourseDTO courseDTO) {
+	Course course = new Course();
+	course.setTitle(courseDTO.getTitle());
     return courseRepository.save(course);
   }
 

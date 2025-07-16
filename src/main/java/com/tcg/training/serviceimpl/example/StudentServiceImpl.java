@@ -2,10 +2,13 @@ package com.tcg.training.serviceimpl.example;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.tcg.training.dto.StudentDTO;
 import com.tcg.training.entity.example.Course;
 import com.tcg.training.entity.example.Student;
 import com.tcg.training.repository.example.CourseRepository;
@@ -21,7 +24,9 @@ public class StudentServiceImpl implements StudentService {
   private CourseRepository courseRepository;
 
   @Override
-  public Student createStudent(Student student) {
+  public Student createStudent(StudentDTO studentDTO) {
+	  Student student = new Student();
+	  student.setName(studentDTO.getName());
     return studentRepository.save(student);
   }
 
@@ -35,22 +40,18 @@ public class StudentServiceImpl implements StudentService {
     return studentRepository.findAll();
   }
 
-  @Override
-  public Student updateStudent(Long id, Student student) {
-    Optional<Student> existing = studentRepository.findById(id);
-    existing.get().getCourses().clear();
-    
-    if (existing.isPresent()) {
-      student.setId(id);
-      for (Course c : student.getCourses()) {
-    	    Course course = courseRepository.findById(c.getId()).orElseThrow();
-    	    student.getCourses().add(course);
-    	}
+	@Override
+	public Student updateStudent(Long id, StudentDTO studentDTO) {
+		Optional<Student> existing = studentRepository.findById(id);
 
-      return studentRepository.save(student);
-    }
-    return null;
-  }
+		if (existing.isPresent()) {
+			Set<Long> courseIds = studentDTO.getCourseIds();
+			List<Course> existingCourse = courseRepository.findAllById(courseIds);
+			existing.get().getCourses().addAll(existingCourse);
+		}
+
+		return studentRepository.save(existing.get());
+	}
 
   @Override
   public void deleteStudent(Long id) {
