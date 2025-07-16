@@ -1,6 +1,7 @@
 package com.tcg.training.service;
 
 import com.tcg.training.entity.Inventory;
+import com.tcg.training.projection.LocQuanAndProdNameInvProjection;
 import com.tcg.training.dto.InventorySummaryDTO;
 import com.tcg.training.dto.InventoryReportDTO;
 import java.util.List;
@@ -32,4 +33,8 @@ public interface InventoryService {
 	List<Inventory> getInventoriesWithMinQuantity(int minQty);
 
 	List<InventoryReportDTO> getInventoryReportWithMinQuantity(int minQty);
+	
+	List<Inventory> getInventoryLocAndQuanByProductId(Long id);
+	
+	List<LocQuanAndProdNameInvProjection> getInventoryLocQuanAndProdNameByProdId(Long prodId);
 }

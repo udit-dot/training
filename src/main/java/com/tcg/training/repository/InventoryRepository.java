@@ -1,6 +1,7 @@
 package com.tcg.training.repository;
 
 import com.tcg.training.entity.Inventory;
+import com.tcg.training.projection.LocQuanAndProdNameInvProjection;
 import com.tcg.training.dto.InventorySummaryDTO;
 import com.tcg.training.dto.InventoryReportDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -45,4 +46,11 @@ public interface InventoryRepository extends JpaRepository<Inventory, Long> {
 	// Native query with @SqlResultSetMapping
 	@Query(value = "SELECT p.product_name, i.location, i.quantity, p.product_price, (i.quantity * p.product_price) as total_value FROM inventory i JOIN product p ON i.product_id = p.product_id WHERE i.quantity > :minQty", nativeQuery = true)
 	List<InventoryReportDTO> findInventoryReportWithMinQuantity(@Param("minQty") int minQty);
+	
+	//JPQL query returns the select field. Return type is object[] because we fetch the selected fields(location and quantity)
+	@Query("SELECT i.location, i.quantity FROM Inventory i WHERE i.product.id = :id")
+	List<Object[]> getLocationAndQuantity(@Param("id") Long id);
+	
+	@Query("SELECT i.location as location, i.quantity as quantity, i.product.productName as productName FROM Inventory i WHERE i.product.id = :id")
+	List<LocQuanAndProdNameInvProjection> getLocationQuantityAndProdName(@Param("id") Long id);
 }

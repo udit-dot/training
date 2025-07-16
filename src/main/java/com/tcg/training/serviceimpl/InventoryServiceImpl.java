@@ -6,12 +6,15 @@ import com.tcg.training.repository.InventoryRepository;
 import com.tcg.training.repository.ProductRepository;
 import com.tcg.training.service.InventoryService;
 import com.tcg.training.exception.ProductNotFoundException;
+import com.tcg.training.projection.LocQuanAndProdNameInvProjection;
 import com.tcg.training.exception.InventoryNotFoundException;
 import com.tcg.training.dto.InventorySummaryDTO;
 import com.tcg.training.dto.InventoryReportDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 @Service
@@ -102,5 +105,24 @@ public class InventoryServiceImpl implements InventoryService {
 	@Override
 	public List<InventoryReportDTO> getInventoryReportWithMinQuantity(int minQty) {
 		return inventoryRepository.findInventoryReportWithMinQuantity(minQty);
+	}
+
+	@Override
+	public List<Inventory> getInventoryLocAndQuanByProductId(Long id) {
+		List<Object[]> obj = inventoryRepository.getLocationAndQuantity(id);
+		List<Inventory> inventoryList = new ArrayList<>();
+		for (Object[] objArray : obj) {
+			Inventory inv = new Inventory();
+			inv.setLocation((String)objArray[0]);
+			inv.setQuantity((int)objArray[1]);
+			inventoryList.add(inv);
+		}
+		return inventoryList;
+	}
+
+	@Override
+	public List<LocQuanAndProdNameInvProjection> getInventoryLocQuanAndProdNameByProdId(Long prodId) {
+		List<LocQuanAndProdNameInvProjection> LocQuanAndProdNameInvProjectionList = inventoryRepository.getLocationQuantityAndProdName(prodId);
+		return LocQuanAndProdNameInvProjectionList;
 	}
 }
