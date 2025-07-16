@@ -75,8 +75,8 @@ public class InventoryServiceImpl implements InventoryService {
 	}
 
 	@Override
-	public List<Inventory> getInventoriesByQuantityRange(Integer minQty, Integer maxQty) {
-		return inventoryRepository.findInventoriesByQuantityRange(minQty, maxQty);
+	public List<String> getInventoriesByQuantityRange(Integer minQty, Integer maxQty) {
+		return inventoryRepository.findlocbyQty(minQty, maxQty);
 	}
 
 	@Override

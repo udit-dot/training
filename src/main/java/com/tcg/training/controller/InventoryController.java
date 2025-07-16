@@ -100,10 +100,10 @@ public class InventoryController {
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "Inventories found", content = @Content(schema = @Schema(implementation = Inventory.class))) })
 	@GetMapping("/quantity-range")
-	public ResponseEntity<List<Inventory>> getInventoriesByQuantityRange(
+	public ResponseEntity<List<String>> getInventoriesByQuantityRange(
 			@Parameter(description = "Minimum quantity", required = true) @RequestParam Integer minQty,
 			@Parameter(description = "Maximum quantity", required = true) @RequestParam Integer maxQty) {
-		List<Inventory> inventories = inventoryService.getInventoriesByQuantityRange(minQty, maxQty);
+		List<String> inventories = inventoryService.getInventoriesByQuantityRange(minQty, maxQty);
 		return ResponseEntity.ok(inventories);
 	}
 

@@ -21,7 +21,7 @@ public interface InventoryService {
 
 	Inventory getInventoryByProductAndLocation(Integer productId, String location);
 
-	List<Inventory> getInventoriesByQuantityRange(Integer minQty, Integer maxQty);
+	List<String> getInventoriesByQuantityRange(Integer minQty, Integer maxQty);
 
 	List<Inventory> getLowStockInventories(Integer threshold);
 

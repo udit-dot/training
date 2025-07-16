@@ -28,8 +28,8 @@ public interface InventoryRepository extends JpaRepository<Inventory, Long> {
 	@Query("SELECT i FROM Inventory i WHERE i.product.productName = :name")
 	List<Inventory> findInventoriesByProductName(@Param("name") String name);
 
-	@Query("SELECT i FROM Inventory i WHERE i.quantity BETWEEN :minQty AND :maxQty")
-	List<Inventory> findInventoriesByQuantityRange(@Param("minQty") Integer minQty, @Param("maxQty") Integer maxQty);
+	@Query("SELECT i.location FROM Inventory i WHERE i.quantity BETWEEN :minQty AND :maxQty")
+	List<String> findlocbyQty(@Param("minQty") Integer minQty, @Param("maxQty") Integer maxQty);
 
 	// DTO projection using JPQL constructor expression
 	@Query("SELECT new com.tcg.training.dto.InventorySummaryDTO(i.product.productName, i.location, i.quantity) FROM Inventory i WHERE i.product.productId = :productId")
