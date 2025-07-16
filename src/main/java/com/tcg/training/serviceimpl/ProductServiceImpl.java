@@ -21,10 +21,10 @@ public class ProductServiceImpl implements ProductService {
 	@Override
 	public Product createProduct(Product product) {
 		if (product.getInventories() != null) {
-	        for (Inventory inventory : product.getInventories()) {
-	            inventory.setProduct(product);
-	        }
-	    }
+			for (Inventory inventory : product.getInventories()) {
+				inventory.setProduct(product);
+			}
+		}
 		return productRepository.save(product);
 	}
 

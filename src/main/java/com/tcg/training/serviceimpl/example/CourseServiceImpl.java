@@ -11,36 +11,36 @@ import java.util.Optional;
 
 @Service
 public class CourseServiceImpl implements CourseService {
-  @Autowired
-  private CourseRepository courseRepository;
+	@Autowired
+	private CourseRepository courseRepository;
 
-  @Override
-  public Course createCourse(Course course) {
-    return courseRepository.save(course);
-  }
+	@Override
+	public Course createCourse(Course course) {
+		return courseRepository.save(course);
+	}
 
-  @Override
-  public Course getCourse(Long id) {
-    return courseRepository.findById(id).orElse(null);
-  }
+	@Override
+	public Course getCourse(Long id) {
+		return courseRepository.findById(id).orElse(null);
+	}
 
-  @Override
-  public List<Course> getAllCourses() {
-    return courseRepository.findAll();
-  }
+	@Override
+	public List<Course> getAllCourses() {
+		return courseRepository.findAll();
+	}
 
-  @Override
-  public Course updateCourse(Long id, Course course) {
-    Optional<Course> existing = courseRepository.findById(id);
-    if (existing.isPresent()) {
-      course.setId(id);
-      return courseRepository.save(course);
-    }
-    return null;
-  }
+	@Override
+	public Course updateCourse(Long id, Course course) {
+		Optional<Course> existing = courseRepository.findById(id);
+		if (existing.isPresent()) {
+			course.setId(id);
+			return courseRepository.save(course);
+		}
+		return null;
+	}
 
-  @Override
-  public void deleteCourse(Long id) {
-    courseRepository.deleteById(id);
-  }
+	@Override
+	public void deleteCourse(Long id) {
+		courseRepository.deleteById(id);
+	}
 }
