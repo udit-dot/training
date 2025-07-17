@@ -57,12 +57,12 @@ public class CourseController {
 
   @Operation(summary = "Update course", description = "Updates an existing course and its students")
   @ApiResponses(value = {
-      @ApiResponse(responseCode = "200", description = "Course updated", content = @Content(schema = @Schema(implementation = Course.class))),
+      @ApiResponse(responseCode = "200", description = "Course updated", content = @Content(schema = @Schema(implementation = CourseDTO.class))),
       @ApiResponse(responseCode = "404", description = "Course not found") })
   @PutMapping("/{id}")
   public ResponseEntity<Course> updateCourse(
-      @Parameter(description = "Course ID", required = true) @PathVariable Long id, @RequestBody Course course) {
-    Course updated = courseService.updateCourse(id, course);
+      @Parameter(description = "Course ID", required = true) @PathVariable Long id, @RequestBody CourseDTO courseDTO) {
+    Course updated = courseService.updateCourse(id, courseDTO);
     if (updated != null) {
       return ResponseEntity.ok(updated);
     } else {
