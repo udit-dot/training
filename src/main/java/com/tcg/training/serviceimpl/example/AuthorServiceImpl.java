@@ -103,4 +103,9 @@ public class AuthorServiceImpl implements AuthorService {
 	public List<Author> getByBookPriceGreaterThan(Double price) {
 		return authorRepository.getAuthorsByPriceGreaterThan(price);
 	}
+
+	@Override
+	public List<Author> getAuthorsByTitleAndPublisher(String title, String publisher) {
+		return authorRepository.getAuthorsByTitleAndPublisher(title, publisher);
+	}
 }

@@ -23,4 +23,9 @@ public interface AuthorRepository extends JpaRepository<Author, Long> {
 	@Query(value = "Select a.* from Author a Join Book b ON a.id = b.author_id where b.price > :price"
 			, nativeQuery = true)
 	List<Author> getAuthorsByPriceGreaterThan(@Param("price") Double price);
+	
+	@Query(value = "Select a.* from Author a Join Book b ON a.id = b.author_id where b.title =:title"
+			+ " And b.publisher =:publisher"
+			, nativeQuery = true)
+	List<Author> getAuthorsByTitleAndPublisher(@Param("title") String title, @Param("publisher") String publisher);
 }

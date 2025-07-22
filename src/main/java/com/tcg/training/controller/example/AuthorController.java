@@ -133,4 +133,15 @@ public class AuthorController {
 		List<Author> authors = authorService.getByBookPriceGreaterThan(price);
 		return ResponseEntity.ok(authors);
 	}
+	
+	@Operation(summary = "Get authors by Book details", description = "Retrieves all authors for a given book title and publisher")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "authors found", content = @Content(schema = @Schema(implementation = Author.class))) })
+	@GetMapping("/byTitlePublisher/{title}/{publisher}")
+	public ResponseEntity<List<Author>> getAuthorsByTitleAndPublisher(
+			@Parameter(description = "title to filter authors", required = true) @PathVariable String title,
+			@Parameter(description = "publisher to filter authors", required = true) @PathVariable String publisher) {
+		List<Author> authors = authorService.getAuthorsByTitleAndPublisher(title, publisher);
+		return ResponseEntity.ok(authors);
+	}
 }

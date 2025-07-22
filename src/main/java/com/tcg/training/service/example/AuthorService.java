@@ -19,5 +19,5 @@ public interface AuthorService {
   List<Author> getAuthorsByBookTitle(String title);
   List<Author> getByBookTitle(String title);
   List<Author> getByBookPriceGreaterThan(Double price);
-  
+  List<Author> getAuthorsByTitleAndPublisher(String title, String publisher);
 }
