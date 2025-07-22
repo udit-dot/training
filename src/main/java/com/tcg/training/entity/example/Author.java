@@ -9,17 +9,18 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import java.util.ArrayList;
 
 @Entity
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Author {
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-  private String name;
+	private String name;
 
-  @JsonManagedReference
-  @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
-  private List<Book> books = new ArrayList<>();
+	@JsonManagedReference
+	@OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Book> books = new ArrayList<>();
 }

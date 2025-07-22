@@ -122,7 +122,7 @@ public class InventoryServiceImpl implements InventoryService {
 
 	@Override
 	public List<LocQuanAndProdNameInvProjection> getInventoryLocQuanAndProdNameByProdId(Long prodId) {
-		List<LocQuanAndProdNameInvProjection> LocQuanAndProdNameInvProjectionList = inventoryRepository.getLocationQuantityAndProdName(prodId);
-		return LocQuanAndProdNameInvProjectionList;
+		List<LocQuanAndProdNameInvProjection> locQuanAndProdNameInvProjectionList = inventoryRepository.getLocationQuantityAndProdName(prodId);
+		return locQuanAndProdNameInvProjectionList;
 	}
 }

@@ -13,4 +13,11 @@ public interface AuthorService {
   Author updateAuthor(Long id, Author author);
 
   void deleteAuthor(Long id);
+  
+  List<Author> getAuthorByName(String name);
+  List<Author> getByName(String name);
+  List<Author> getAuthorsByBookTitle(String title);
+  List<Author> getByBookTitle(String title);
+  List<Author> getByBookPriceGreaterThan(Double price);
+  
 }

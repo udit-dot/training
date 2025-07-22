@@ -157,7 +157,7 @@ public class InventoryController {
 		List<InventoryReportDTO> report = inventoryService.getInventoryReportWithMinQuantity(minQty);
 		return ResponseEntity.ok(report);
 	}
-	
+
 	@Operation(summary = "Get inventory report only with location and quantity by product id", description = "Retrieves inventory report for items with only location and quantity By Product Id")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "Inventory report found", content = @Content(schema = @Schema(implementation = Inventory.class))) })
@@ -167,7 +167,7 @@ public class InventoryController {
 		List<Inventory> report = inventoryService.getInventoryLocAndQuanByProductId(id);
 		return ResponseEntity.ok(report);
 	}
-	
+
 	@Operation(summary = "Get inventory report only with location, quantity and product name By Product Id", description = "Retrieves inventory report for items with only location, quantity and product name by product id")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "Inventory report found", content = @Content(schema = @Schema(implementation = LocQuanAndProdNameInvProjection.class))) })
