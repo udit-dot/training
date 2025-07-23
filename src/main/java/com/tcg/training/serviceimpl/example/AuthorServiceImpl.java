@@ -7,8 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.tcg.training.dto.example.AuthorBookCollectionDto;
+import com.tcg.training.dto.example.AuthorBookResultSetDto;
 import com.tcg.training.entity.example.Author;
 import com.tcg.training.entity.example.Book;
+import com.tcg.training.projection.example.AuthorBookView;
 import com.tcg.training.repository.example.AuthorRepository;
 import com.tcg.training.repository.example.BookRepository;
 import com.tcg.training.service.example.AuthorService;
@@ -40,8 +43,8 @@ public class AuthorServiceImpl implements AuthorService {
 	@Transactional
 	public Author updateAuthor(Long id, Author author) {
 		Author existing = authorRepository.findById(id).orElseThrow(() -> new RuntimeException("Author not found"));
-//		author.setId(id);
-//		return authorRepository.save(author);
+		// author.setId(id);
+		// return authorRepository.save(author);
 		if (author.getName() != null && !author.getName().isEmpty()) {
 			existing.setName(author.getName());
 		}
@@ -107,5 +110,25 @@ public class AuthorServiceImpl implements AuthorService {
 	@Override
 	public List<Author> getAuthorsByTitleAndPublisher(String title, String publisher) {
 		return authorRepository.getAuthorsByTitleAndPublisher(title, publisher);
+	}
+
+	@Override
+	public List<AuthorBookCollectionDto> getAuthorBookCollectionData() {
+		return authorRepository.fetchAuthorBookCollection();
+	}
+
+	@Override
+	public List<AuthorBookResultSetDto> getAuthorBookByNameAndPrice(String name, Double price) {
+		return authorRepository.fetchAuthorBooksByAuthorAndPrice(name, price);
+	}
+
+	@Override
+	public List<AuthorBookView> getAuthorBookByProjection() {
+		return authorRepository.fetchAuthorBookView();
+	}
+
+	@Override
+	public List<AuthorBookView> getAuthorBookByNative() {
+		return authorRepository.fetchAuthorBookViewByNative();
 	}
 }

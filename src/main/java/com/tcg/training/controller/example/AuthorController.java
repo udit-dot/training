@@ -13,7 +13,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.tcg.training.dto.example.AuthorBookCollectionDto;
+import com.tcg.training.dto.example.AuthorBookResultSetDto;
 import com.tcg.training.entity.example.Author;
+import com.tcg.training.projection.example.AuthorBookView;
 import com.tcg.training.service.example.AuthorService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -93,7 +96,7 @@ public class AuthorController {
 		List<Author> authors = authorService.getAuthorByName(name);
 		return ResponseEntity.ok(authors);
 	}
-	
+
 	@Operation(summary = "Get authors by Book", description = "Retrieves all authors for a given book title")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "authors found", content = @Content(schema = @Schema(implementation = Author.class))) })
@@ -103,7 +106,7 @@ public class AuthorController {
 		List<Author> authors = authorService.getAuthorsByBookTitle(title);
 		return ResponseEntity.ok(authors);
 	}
-	
+
 	@Operation(summary = "Get authors by name", description = "Retrieves all authors for a given name")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "authors found", content = @Content(schema = @Schema(implementation = Author.class))) })
@@ -113,7 +116,7 @@ public class AuthorController {
 		List<Author> authors = authorService.getByName(name);
 		return ResponseEntity.ok(authors);
 	}
-	
+
 	@Operation(summary = "Get authors by Book", description = "Retrieves all authors for a given book title")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "authors found", content = @Content(schema = @Schema(implementation = Author.class))) })
@@ -123,7 +126,7 @@ public class AuthorController {
 		List<Author> authors = authorService.getByBookTitle(title);
 		return ResponseEntity.ok(authors);
 	}
-	
+
 	@Operation(summary = "Get authors by Book price check", description = "Retrieves all authors for a given book price")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "authors found", content = @Content(schema = @Schema(implementation = Author.class))) })
@@ -133,7 +136,7 @@ public class AuthorController {
 		List<Author> authors = authorService.getByBookPriceGreaterThan(price);
 		return ResponseEntity.ok(authors);
 	}
-	
+
 	@Operation(summary = "Get authors by Book details", description = "Retrieves all authors for a given book title and publisher")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "authors found", content = @Content(schema = @Schema(implementation = Author.class))) })
@@ -142,6 +145,44 @@ public class AuthorController {
 			@Parameter(description = "title to filter authors", required = true) @PathVariable String title,
 			@Parameter(description = "publisher to filter authors", required = true) @PathVariable String publisher) {
 		List<Author> authors = authorService.getAuthorsByTitleAndPublisher(title, publisher);
+		return ResponseEntity.ok(authors);
+	}
+
+	@Operation(summary = "Get authors and book details", description = "Retrieves all authors-book data collection")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "Data found", content = @Content(schema = @Schema(implementation = AuthorBookCollectionDto.class))) })
+	@GetMapping("/authorBookDto")
+	public ResponseEntity<List<AuthorBookCollectionDto>> fetchAuthorBookCollection() {
+		List<AuthorBookCollectionDto> authors = authorService.getAuthorBookCollectionData();
+		return ResponseEntity.ok(authors);
+	}
+
+	@Operation(summary = "Get authors and book details", description = "Retrieves all authors-book data collection")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "Data found", content = @Content(schema = @Schema(implementation = AuthorBookResultSetDto.class))) })
+	@GetMapping("/authorBookDtoByResultSet/{name}/{price}")
+	public ResponseEntity<List<AuthorBookResultSetDto>> fetchAuthorBookByNameAndPrice(
+			@Parameter(description = "name to filter authors", required = true) @PathVariable String name,
+			@Parameter(description = "price to filter authors", required = true) @PathVariable Double price) {
+		List<AuthorBookResultSetDto> authors = authorService.getAuthorBookByNameAndPrice(name, price);
+		return ResponseEntity.ok(authors);
+	}
+
+	@Operation(summary = "Get authors and book details", description = "Retrieves all authors-book data collection")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "Data found", content = @Content(schema = @Schema(implementation = AuthorBookView.class))) })
+	@GetMapping("/authorBookByProjection")
+	public ResponseEntity<List<AuthorBookView>> fetchAuthorBookByProjection() {
+		List<AuthorBookView> authors = authorService.getAuthorBookByProjection();
+		return ResponseEntity.ok(authors);
+	}
+	
+	@Operation(summary = "Get authors and book details", description = "Retrieves all authors-book data collection")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "Data found", content = @Content(schema = @Schema(implementation = AuthorBookView.class))) })
+	@GetMapping("/authorBookByNative")
+	public ResponseEntity<List<AuthorBookView>> fetchAuthorBookByNative() {
+		List<AuthorBookView> authors = authorService.getAuthorBookByNative();
 		return ResponseEntity.ok(authors);
 	}
 }

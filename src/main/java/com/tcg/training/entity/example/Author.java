@@ -13,6 +13,12 @@ import java.util.ArrayList;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@SqlResultSetMapping(name = "AuthorBookDataMapping", classes = @ConstructorResult(targetClass = com.tcg.training.dto.example.AuthorBookResultSetDto.class, 
+columns = {
+	@ColumnResult(name = "authorName", type = String.class),
+	@ColumnResult(name = "bookTitle", type = String.class), 
+	@ColumnResult(name = "publisher", type = String.class),
+	@ColumnResult(name = "price", type = Double.class) }))
 public class Author {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

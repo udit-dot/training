@@ -12,8 +12,6 @@ import com.tcg.training.dto.InventorySummaryDTO;
 import com.tcg.training.entity.Inventory;
 import com.tcg.training.projection.LocQuanAndProdNameInvProjection;
 
-import jakarta.persistence.SqlResultSetMapping;
-
 @Repository
 public interface InventoryRepository extends JpaRepository<Inventory, Long> {
 

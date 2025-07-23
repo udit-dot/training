@@ -1,7 +1,11 @@
 package com.tcg.training.service.example;
 
-import com.tcg.training.entity.example.Author;
 import java.util.List;
+
+import com.tcg.training.dto.example.AuthorBookCollectionDto;
+import com.tcg.training.dto.example.AuthorBookResultSetDto;
+import com.tcg.training.entity.example.Author;
+import com.tcg.training.projection.example.AuthorBookView;
 
 public interface AuthorService {
   Author createAuthor(Author author);
@@ -20,4 +24,10 @@ public interface AuthorService {
   List<Author> getByBookTitle(String title);
   List<Author> getByBookPriceGreaterThan(Double price);
   List<Author> getAuthorsByTitleAndPublisher(String title, String publisher);
+  
+  List<AuthorBookCollectionDto> getAuthorBookCollectionData();
+  List<AuthorBookResultSetDto> getAuthorBookByNameAndPrice(String name, Double price);
+  
+  List<AuthorBookView> getAuthorBookByProjection();
+  List<AuthorBookView> getAuthorBookByNative();
 }
