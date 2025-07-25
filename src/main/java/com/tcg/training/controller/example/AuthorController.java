@@ -1,21 +1,28 @@
 package com.tcg.training.controller.example;
 
+import java.time.LocalDate;
 import java.util.List;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tcg.training.dto.example.AuthorBookCollectionDto;
 import com.tcg.training.dto.example.AuthorBookResultSetDto;
+import com.tcg.training.dto.example.AuthorDto;
+import com.tcg.training.dto.example.AuthorWithBooksDto;
 import com.tcg.training.entity.example.Author;
+import com.tcg.training.entity.example.Book;
 import com.tcg.training.projection.example.AuthorBookView;
 import com.tcg.training.service.example.AuthorService;
 
@@ -34,12 +41,34 @@ public class AuthorController {
 	@Autowired
 	private AuthorService authorService;
 
+	@Autowired
+	private ModelMapper mapper;
+
 	@Operation(summary = "Create a new author", description = "Creates a new author with books")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "201", description = "Author created successfully", content = @Content(schema = @Schema(implementation = Author.class))) })
 	@PostMapping
 	public ResponseEntity<Author> createAuthor(@RequestBody Author author) {
 		Author created = authorService.createAuthor(author);
+		return ResponseEntity.status(201).body(created);
+	}
+
+	@Operation(summary = "Create a new author from DTO", description = "Creates a new author from an AuthorDto and maps fields, handles LocalDate conversion for birthDate")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "201", description = "Author created successfully", content = @Content(schema = @Schema(implementation = Author.class))) })
+	@PostMapping("/dto")
+	public ResponseEntity<Author> createAuthorFromDto(@RequestBody AuthorDto authorDto) {
+		
+		Author created = authorService.saveAuthorWithDto(authorDto);
+		return ResponseEntity.status(201).body(created);
+	}
+
+	@Operation(summary = "Create a new author with full book details", description = "Creates a new author with a list of books")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "201", description = "Author created successfully", content = @Content(schema = @Schema(implementation = Author.class))) })
+	@PostMapping("/with-books")
+	public ResponseEntity<Author> createAuthorWithBooks(@RequestBody AuthorWithBooksDto dto) {
+		Author created = authorService.saveAuthorWithBooks(dto);
 		return ResponseEntity.status(201).body(created);
 	}
 
@@ -176,7 +205,7 @@ public class AuthorController {
 		List<AuthorBookView> authors = authorService.getAuthorBookByProjection();
 		return ResponseEntity.ok(authors);
 	}
-	
+
 	@Operation(summary = "Get authors and book details", description = "Retrieves all authors-book data collection")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "Data found", content = @Content(schema = @Schema(implementation = AuthorBookView.class))) })
@@ -184,5 +213,34 @@ public class AuthorController {
 	public ResponseEntity<List<AuthorBookView>> fetchAuthorBookByNative() {
 		List<AuthorBookView> authors = authorService.getAuthorBookByNative();
 		return ResponseEntity.ok(authors);
+	}
+
+	@Operation(summary = "Get partial author-book info by author name", description = "Retrieves a list of AuthorBookResultSetDto for a given author name")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "Data found", content = @Content(schema = @Schema(implementation = AuthorBookResultSetDto.class))) })
+	@GetMapping("/partial-author-book-info/{authorName}")
+	public List<AuthorBookResultSetDto> getPartialAuthorBookInfo(@PathVariable String authorName) {
+		return authorService.fetchPartialAuthorBookInfo(authorName);
+	}
+
+	@Operation(summary = "Update author", description = "updates author name only")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "Data updated", content = @Content(schema = @Schema(implementation = Author.class))) })
+	@PatchMapping("/update-author-name/{id}")
+	public Author updateAuthorNameById(@PathVariable Long id, @RequestParam String name) {
+		return authorService.updateAuthorNameById(id, name);
+	}
+
+	@Operation(summary = "Get author by ID (DTO)", description = "Retrieves an author by ID and maps to AuthorDto (id, name, bookTitles)")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "Author found", content = @Content(schema = @Schema(implementation = AuthorDto.class))) })
+	@GetMapping("/dto/{id}")
+	public AuthorDto getAuthorDtoById(@PathVariable Long id) {
+		Author author = authorService.getAuthor(id);
+		ModelMapper modelMapper = new ModelMapper();
+		AuthorDto dto = modelMapper.map(author, AuthorDto.class);
+		// Manually map book titles
+		dto.setBookTitles(author.getBooks().stream().map(Book::getTitle).toList());
+		return dto;
 	}
 }

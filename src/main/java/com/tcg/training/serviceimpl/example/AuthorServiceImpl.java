@@ -9,12 +9,18 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.tcg.training.dto.example.AuthorBookCollectionDto;
 import com.tcg.training.dto.example.AuthorBookResultSetDto;
+import com.tcg.training.dto.example.AuthorDto;
+import com.tcg.training.dto.example.AuthorWithBooksDto;
+import com.tcg.training.dto.example.BookSimpleDto;
 import com.tcg.training.entity.example.Author;
 import com.tcg.training.entity.example.Book;
 import com.tcg.training.projection.example.AuthorBookView;
 import com.tcg.training.repository.example.AuthorRepository;
 import com.tcg.training.repository.example.BookRepository;
 import com.tcg.training.service.example.AuthorService;
+import org.modelmapper.ModelMapper;
+import java.time.LocalDate;
+import java.util.stream.Collectors;
 
 @Service
 public class AuthorServiceImpl implements AuthorService {
@@ -23,6 +29,9 @@ public class AuthorServiceImpl implements AuthorService {
 
 	@Autowired
 	private BookRepository bookRepository;
+	
+	@Autowired
+	private ModelMapper mapper;
 
 	@Override
 	public Author createAuthor(Author author) {
@@ -131,4 +140,46 @@ public class AuthorServiceImpl implements AuthorService {
 	public List<AuthorBookView> getAuthorBookByNative() {
 		return authorRepository.fetchAuthorBookViewByNative();
 	}
+
+	@Override
+	public List<AuthorBookResultSetDto> fetchPartialAuthorBookInfo(String authorName) {
+		return authorRepository.fetchPartialAuthorBookInfo(authorName);
+	}
+
+	@Override
+	@Transactional
+	public Author updateAuthorNameById(Long id, String name) {
+		int updated = authorRepository.updateAuthorNameById(id, name);
+		if (updated > 0) {
+			return authorRepository.findById(id).orElse(null);
+		} else {
+			return null;
+		}
+	}
+
+	@Override
+	public Author saveAuthorWithBooks(AuthorWithBooksDto dto) {
+		Author author = mapper.map(dto, Author.class);
+		if (dto.getBooks() != null) {
+			List<Book> books = dto.getBooks().stream().map(bookDto -> {
+				Book book = mapper.map(bookDto, Book.class);
+				book.setAuthor(author);
+				return book;
+			}).toList();
+			author.setBooks(books);
+		}
+		return authorRepository.save(author);
+	}
+
+	@Override
+	public Author saveAuthorWithDto(AuthorDto authorDto) {
+//		ModelMapper modelMapper = new ModelMapper();
+		Author author = mapper.map(authorDto, Author.class);
+		// Handle LocalDate conversion for birthDate
+//		if (authorDto.getBirthDate() != null) {
+//			author.setBirthDate(LocalDate.parse(authorDto.getBirthDate()));
+//		}
+		return authorRepository.save(author);
+	}
+	
 }

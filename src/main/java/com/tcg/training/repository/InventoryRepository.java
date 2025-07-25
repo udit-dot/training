@@ -48,14 +48,15 @@ public interface InventoryRepository extends JpaRepository<Inventory, Long> {
 //	@SqlResultSetMapping(name = "InventoryReportMapping")
 	@Query(value = "SELECT p.product_name, i.location, i.quantity, p.product_price, (i.quantity * p.product_price) as total_value FROM inventory i JOIN product p ON i.product_id = p.product_id WHERE i.quantity > :minQty", nativeQuery = true)
 	List<InventoryReportDTO> findInventoryReportWithMinQuantity(@Param("minQty") int minQty);
-	
-	//JPQL query returns the select field. Return type is object[] because we fetch the selected fields(location and quantity)
+
+	// JPQL query returns the select field. Return type is object[] because we fetch
+	// the selected fields(location and quantity)
 	@Query("SELECT i.location, i.quantity FROM Inventory i WHERE i.product.id = :id")
 	List<Object[]> getLocationAndQuantity(@Param("id") Long id);
-	
+
 	@Query("SELECT i.location as location, i.quantity as quantity, i.product.productName as productName FROM Inventory i WHERE i.product.id = :id")
 	List<LocQuanAndProdNameInvProjection> getLocationQuantityAndProdName(@Param("id") Long id);
-	
+
 //	@Query(value = "SELECT i.location as location, i.quantity as quantity, p.product_name as productName FROM Inventory i join product p ON i.product_id = p.product_id WHERE i.product_id = :id", nativeQuery = true)
 //	List<LocQuanAndProdNameInvProjection> getLocationQuantityAndProdName(@Param("id") Long id);
 }

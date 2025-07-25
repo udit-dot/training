@@ -13,4 +13,10 @@ public class AuthorBookResultSetDto {
 	private String bookTitle;
 	private String publisher;
 	private Double price;
+	
+	public AuthorBookResultSetDto(String authorName, String bookTitle, String publisher) {
+		this.authorName = authorName;
+		this.bookTitle = bookTitle;
+		this.publisher = publisher;
+	}
 }
