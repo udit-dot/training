@@ -7,19 +7,22 @@ import java.util.List;
 
 public interface DocumentService {
 
-  Document uploadDocument(MultipartFile file, String description, String category, String uploadedBy, String status);
+	Document uploadDocument(MultipartFile file, String description, String category, String uploadedBy, String status);
 
-  Document getDocument(Long id);
+	List<Document> uploadMultipleDocuments(List<MultipartFile> files, String description, String category,
+			String uploadedBy, String status);
 
-  byte[] getDocumentFile(Long id);
+	Document getDocument(Long id);
 
-  List<Document> getAllDocuments();
+	byte[] getDocumentFile(Long id);
 
-  List<Document> getDocumentsByCategory(String category);
+	List<Document> getAllDocuments();
 
-  List<Document> getDocumentsByUploader(String uploadedBy);
+	List<Document> getDocumentsByCategory(String category);
 
-  void deleteDocument(Long id);
+	List<Document> getDocumentsByUploader(String uploadedBy);
 
-  Document updateDocument(Long id, String description, String category, String status);
+	void deleteDocument(Long id);
+
+	Document updateDocument(Long id, String description, String category, String status);
 }

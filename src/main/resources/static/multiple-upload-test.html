@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Multiple File Upload Test</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+
+    input[type="file"],
+    input[type="text"] {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+
+    button {
+      background-color: #007bff;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-right: 10px;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .result {
+      margin-top: 20px;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      background-color: #f9f9f9;
+    }
+
+    .error {
+      color: red;
+    }
+
+    .success {
+      color: green;
+    }
+
+    .document-list {
+      margin-top: 15px;
+    }
+
+    .document-item {
+      border: 1px solid #ddd;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 4px;
+      background-color: white;
+    }
+
+    .document-item h4 {
+      margin: 0 0 5px 0;
+      color: #333;
+    }
+
+    .document-item p {
+      margin: 5px 0;
+      color: #666;
+    }
+
+    .download-link {
+      color: #007bff;
+      text-decoration: none;
+    }
+
+    .download-link:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Multiple File Upload Test</h1>
+
+  <h2>Method 1: Simple Multiple File Upload</h2>
+  <form id="multipleUploadForm">
+    <div class="form-group">
+      <label for="files">Select PDF Files:</label>
+      <input type="file" id="files" name="files" multiple accept=".pdf" required>
+    </div>
+    <div class="form-group">
+      <label for="description">Description:</label>
+      <input type="text" id="description" name="description" placeholder="Enter description">
+    </div>
+    <div class="form-group">
+      <label for="category">Category:</label>
+      <input type="text" id="category" name="category" placeholder="Enter category">
+    </div>
+    <div class="form-group">
+      <label for="uploadedBy">Uploaded By:</label>
+      <input type="text" id="uploadedBy" name="uploadedBy" placeholder="Enter your name" required>
+    </div>
+    <div class="form-group">
+      <label for="status">Status:</label>
+      <input type="text" id="status" name="status" placeholder="Enter status (optional)">
+    </div>
+    <button type="submit">Upload Multiple Files</button>
+  </form>
+
+  <h2>Method 2: Multiple File Upload with JSON Metadata</h2>
+  <form id="multipleUploadJsonForm">
+    <div class="form-group">
+      <label for="filesJson">Select PDF Files:</label>
+      <input type="file" id="filesJson" name="files" multiple accept=".pdf" required>
+    </div>
+    <div class="form-group">
+      <label for="metadata">Metadata (JSON):</label>
+      <textarea id="metadata" name="metadata" rows="4" style="width: 100%; padding: 8px;"
+        placeholder='{"description": "Test documents", "category": "test", "uploadedBy": "user", "status": "ACTIVE"}'></textarea>
+    </div>
+    <button type="submit">Upload with JSON Metadata</button>
+  </form>
+
+  <div id="result" class="result" style="display: none;"></div>
+  <div id="documentList" class="document-list" style="display: none;"></div>
+
+  <script>
+    document.getElementById('multipleUploadForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+      uploadMultipleFiles();
+    });
+
+    document.getElementById('multipleUploadJsonForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+      uploadMultipleFilesWithJson();
+    });
+
+    function uploadMultipleFiles() {
+      const formData = new FormData();
+      const files = document.getElementById('files').files;
+      const description = document.getElementById('description').value;
+      const category = document.getElementById('category').value;
+      const uploadedBy = document.getElementById('uploadedBy').value;
+      const status = document.getElementById('status').value;
+
+      // Add files
+      for (let i = 0; i < files.length; i++) {
+        formData.append('files', files[i]);
+      }
+
+      // Add other fields
+      if (description) formData.append('description', description);
+      if (category) formData.append('category', category);
+      formData.append('uploadedBy', uploadedBy);
+      if (status) formData.append('status', status);
+
+      fetch('/api/documents/upload-multiple', {
+        method: 'POST',
+        body: formData
+      })
+        .then(response => response.json())
+        .then(data => {
+          showResult('Success! Uploaded ' + data.length + ' documents', 'success');
+          showDocumentList(data);
+          console.log('Uploaded documents:', data);
+        })
+        .catch(error => {
+          showResult('Error: ' + error.message, 'error');
+          console.error('Error:', error);
+        });
+    }
+
+    function uploadMultipleFilesWithJson() {
+      const formData = new FormData();
+      const files = document.getElementById('filesJson').files;
+      const metadata = document.getElementById('metadata').value;
+
+      // Add files
+      for (let i = 0; i < files.length; i++) {
+        formData.append('files', files[i]);
+      }
+
+      // Add metadata
+      formData.append('metadata', metadata);
+
+      fetch('/api/documents/upload-multiple-json', {
+        method: 'POST',
+        body: formData
+      })
+        .then(response => response.json())
+        .then(data => {
+          showResult('Success! Uploaded ' + data.length + ' documents with JSON metadata', 'success');
+          showDocumentList(data);
+          console.log('Uploaded documents:', data);
+        })
+        .catch(error => {
+          showResult('Error: ' + error.message, 'error');
+          console.error('Error:', error);
+        });
+    }
+
+    function showResult(message, type) {
+      const resultDiv = document.getElementById('result');
+      resultDiv.textContent = message;
+      resultDiv.className = 'result ' + type;
+      resultDiv.style.display = 'block';
+    }
+
+    function showDocumentList(documents) {
+      const documentListDiv = document.getElementById('documentList');
+      documentListDiv.innerHTML = '<h3>Uploaded Documents:</h3>';
+
+      documents.forEach(doc => {
+        const docItem = document.createElement('div');
+        docItem.className = 'document-item';
+        docItem.innerHTML = `
+                    <h4>${doc.originalFileName}</h4>
+                    <p><strong>ID:</strong> ${doc.id}</p>
+                    <p><strong>Description:</strong> ${doc.description || 'N/A'}</p>
+                    <p><strong>Category:</strong> ${doc.category || 'N/A'}</p>
+                    <p><strong>Uploaded By:</strong> ${doc.uploadedBy}</p>
+                    <p><strong>Status:</strong> ${doc.status}</p>
+                    <p><strong>File Size:</strong> ${doc.formattedFileSize || doc.fileSize + ' bytes'}</p>
+                    <p><strong>Uploaded At:</strong> ${new Date(doc.uploadedAt).toLocaleString()}</p>
+                    <p><strong>Download:</strong> <a href="${doc.downloadUrl}" class="download-link" target="_blank">Download File</a></p>
+                `;
+        documentListDiv.appendChild(docItem);
+      });
+
+      documentListDiv.style.display = 'block';
+    }
+  </script>
+</body>
+
+</html>

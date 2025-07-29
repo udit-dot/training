@@ -9,11 +9,11 @@ import java.util.List;
 @Repository
 public interface DocumentRepository extends JpaRepository<Document, Long> {
 
-  List<Document> findByCategory(String category);
+	List<Document> findByCategory(String category);
 
-  List<Document> findByUploadedBy(String uploadedBy);
+	List<Document> findByUploadedBy(String uploadedBy);
 
-  List<Document> findByStatus(String status);
+	List<Document> findByStatus(String status);
 
-  List<Document> findByContentType(String contentType);
+	List<Document> findByContentType(String contentType);
 }

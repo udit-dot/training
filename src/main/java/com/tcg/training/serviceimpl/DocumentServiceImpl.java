@@ -64,6 +64,58 @@ public class DocumentServiceImpl implements DocumentService {
 	}
 
 	@Override
+	public List<Document> uploadMultipleDocuments(List<MultipartFile> files, String description, String category,
+			String uploadedBy, String status) {
+		List<Document> uploadedDocuments = new java.util.ArrayList<>();
+
+		for (MultipartFile file : files) {
+			try {
+				// Validate file
+				if (file.isEmpty()) {
+					throw new RuntimeException("File is empty: " + file.getOriginalFilename());
+				}
+
+				// Validate file type
+				String contentType = file.getContentType();
+				if (contentType == null || !contentType.equals("application/pdf")) {
+					throw new RuntimeException("Only PDF files are allowed. File: " + file.getOriginalFilename());
+				}
+
+				// Generate unique filename
+				String originalFileName = file.getOriginalFilename();
+				String fileExtension = originalFileName != null
+						? originalFileName.substring(originalFileName.lastIndexOf("."))
+						: ".pdf";
+				String fileName = UUID.randomUUID().toString() + fileExtension;
+
+				// Read file data into byte array
+				byte[] fileData = file.getBytes();
+
+				// Create document entity
+				Document document = new Document();
+				document.setFileName(fileName);
+				document.setOriginalFileName(originalFileName);
+				document.setContentType(contentType);
+				document.setFileSize(file.getSize());
+				document.setFileData(fileData);
+				document.setDescription(description);
+				document.setUploadedBy(uploadedBy);
+				document.setCategory(category);
+				document.setStatus(status != null ? status : "ACTIVE");
+
+				// Save to database
+				Document savedDocument = documentRepository.save(document);
+				uploadedDocuments.add(savedDocument);
+
+			} catch (IOException e) {
+				throw new RuntimeException("Failed to read file data for: " + file.getOriginalFilename(), e);
+			}
+		}
+
+		return uploadedDocuments;
+	}
+
+	@Override
 	public Document getDocument(Long id) {
 		return documentRepository.findById(id).orElseThrow(() -> new DocumentNotFoundException(id));
 	}
