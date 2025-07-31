@@ -25,4 +25,6 @@ public interface DocumentService {
 	void deleteDocument(Long id);
 
 	Document updateDocument(Long id, String description, String category, String status);
+	Document updateDocumentWithFile(Long id, MultipartFile file, 
+			String description, String category, String status, String uploadedBy);
 }

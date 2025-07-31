@@ -150,7 +150,6 @@ public class DocumentServiceImpl implements DocumentService {
 	@Override
 	public Document updateDocument(Long id, String description, String category, String status) {
 		Document document = getDocument(id);
-
 		if (description != null) {
 			document.setDescription(description);
 		}
@@ -159,6 +158,50 @@ public class DocumentServiceImpl implements DocumentService {
 		}
 		if (status != null) {
 			document.setStatus(status);
+		}
+
+		return documentRepository.save(document);
+	}
+
+	@Override
+	public Document updateDocumentWithFile(Long id, MultipartFile file, String description, String category,
+			String status, String uploadedBy) {
+		Document document = getDocument(id);
+		try {
+			if (file.isEmpty()) {
+				throw new RuntimeException("File is empty: " + file.getOriginalFilename());
+			}
+			// Validate file type
+			String contentType = file.getContentType();
+			if (contentType == null || !contentType.equals("application/pdf")) {
+				throw new RuntimeException("Only PDF files are allowed. File: " + file.getOriginalFilename());
+			}
+
+			// Generate unique filename
+			String originalFileName = file.getOriginalFilename();
+			String fileExtension = originalFileName != null
+					? originalFileName.substring(originalFileName.lastIndexOf("."))
+					: ".pdf";
+			String fileName = UUID.randomUUID().toString() + fileExtension;
+			document.setFileData(file.getBytes());
+			document.setFileName(fileName);
+			document.setOriginalFileName(originalFileName);
+			document.setContentType(contentType);
+			document.setFileSize(file.getSize());
+			if (description != null) {
+				document.setDescription(description);
+			}
+			if (category != null) {
+				document.setCategory(category);
+			}
+			if (status != null) {
+				document.setStatus(status);
+			}
+			if (uploadedBy != null) {
+				document.setUploadedBy(uploadedBy);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 
 		return documentRepository.save(document);

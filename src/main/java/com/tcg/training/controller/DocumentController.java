@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -89,9 +90,11 @@ public class DocumentController {
 		return ResponseEntity.status(201).body(responseDTO);
 	}
 
-	@Operation(summary = "Upload PDF with JSON metadata", description = "Uploads a PDF document with stringified JSON metadata")
+	@Operation(summary = "Upload PDF with JSON metadata", 
+			description = "Uploads a PDF document with stringified JSON metadata")
 	@ApiResponses(value = {
-			@ApiResponse(responseCode = "201", description = "Document uploaded successfully", content = @Content(schema = @Schema(implementation = DocumentResponseDTO.class))),
+			@ApiResponse(responseCode = "201", description = "Document uploaded successfully", 
+					content = @Content(schema = @Schema(implementation = DocumentResponseDTO.class))),
 			@ApiResponse(responseCode = "400", description = "Invalid file or JSON parameters"),
 			@ApiResponse(responseCode = "500", description = "Internal server error") })
 	@PostMapping("/upload-json")
@@ -195,13 +198,15 @@ public class DocumentController {
 		byte[] fileData = documentService.getDocumentFile(id);
 
 		return ResponseEntity.ok()
-				.header("Content-Disposition", "attachment; filename=\"" + document.getOriginalFileName() + "\"")
-				.header("Content-Type", document.getContentType()).body(fileData);
+				.header(HttpHeaders.CONTENT_DISPOSITION, 
+						"attachment; filename=\"" + document.getOriginalFileName() + "\"")
+				.header(HttpHeaders.CONTENT_TYPE, document.getContentType()).body(fileData);
 	}
 
 	@Operation(summary = "Get document by ID", description = "Retrieves a specific document by its ID")
 	@ApiResponses(value = {
-			@ApiResponse(responseCode = "200", description = "Document found", content = @Content(schema = @Schema(implementation = DocumentResponseDTO.class))),
+			@ApiResponse(responseCode = "200", description = "Document found", 
+					content = @Content(schema = @Schema(implementation = DocumentResponseDTO.class))),
 			@ApiResponse(responseCode = "404", description = "Document not found") })
 	@GetMapping("/{id}")
 	public ResponseEntity<DocumentResponseDTO> getDocumentById(
@@ -211,17 +216,42 @@ public class DocumentController {
 		return ResponseEntity.ok(responseDTO);
 	}
 
-	@Operation(summary = "Update document metadata", description = "Updates document description, category, and status")
+	@Operation(summary = "Update document metadata", 
+			description = "Updates document description, category, and status")
 	@ApiResponses(value = {
-			@ApiResponse(responseCode = "200", description = "Document updated successfully", content = @Content(schema = @Schema(implementation = DocumentResponseDTO.class))),
+			@ApiResponse(responseCode = "200", description = "Document updated successfully", 
+					content = @Content(schema = @Schema(implementation = DocumentResponseDTO.class))),
 			@ApiResponse(responseCode = "404", description = "Document not found") })
 	@PutMapping("/{id}")
 	public ResponseEntity<DocumentResponseDTO> updateDocument(
 			@Parameter(description = "Document ID", required = true) @PathVariable Long id,
-			@Parameter(description = "Document metadata to update") @RequestBody DocumentUploadRequest metadata) {
+			@Parameter(description = "Document metadata to update") 
+			@RequestBody DocumentUploadRequest metadata) {
 
-		Document updatedDocument = documentService.updateDocument(id, metadata.getDescription(), metadata.getCategory(),
+		Document updatedDocument = 
+				documentService.updateDocument(id, metadata.getDescription(), metadata.getCategory(),
 				metadata.getStatus());
+		DocumentResponseDTO responseDTO = toResponseDTO(updatedDocument);
+		return ResponseEntity.ok(responseDTO);
+	}
+	
+	@Operation(summary = "Update document metadata", 
+			description = "Updates document description, category, and status")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "Document updated successfully", 
+					content = @Content(schema = @Schema(implementation = DocumentResponseDTO.class))),
+			@ApiResponse(responseCode = "404", description = "Document not found") })
+	@PutMapping("/withFile/{id}")
+	public ResponseEntity<DocumentResponseDTO> updateDocumentWithFile(
+			@Parameter(description = "Document ID", required = true) @PathVariable Long id,
+			@Parameter(description = "PDF file to upload", required = true) 
+			@RequestPart("file") MultipartFile file,
+			@Parameter(description = "Document metadata to update") 
+			@RequestPart("metadata") DocumentUploadRequest metadata) {
+
+		Document updatedDocument = 
+				documentService.updateDocumentWithFile(id, file, metadata.getDescription(), 
+						metadata.getCategory(), metadata.getStatus(), metadata.getUploadedBy());
 		DocumentResponseDTO responseDTO = toResponseDTO(updatedDocument);
 		return ResponseEntity.ok(responseDTO);
 	}

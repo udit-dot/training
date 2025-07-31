@@ -28,6 +28,10 @@ public class Book {
 	private Double price;
 
 	private String publisher;
+	
+//	private String newData;
+	
+//	private String authorName;
 
 	@JsonBackReference
 	@ManyToOne

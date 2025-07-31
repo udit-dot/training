@@ -8,6 +8,7 @@ public class AuthorDto {
 	private Long id;
 	private String name;
 	private List<String> bookTitles;
+//	private List<BookDto> books;
 	private String nationality;
 	private String birthDate;
 	private String biography;

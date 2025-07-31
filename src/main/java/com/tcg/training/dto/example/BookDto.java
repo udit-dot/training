@@ -7,5 +7,9 @@ public class BookDto {
   private String title;
   private Double price;
   private String publisher;
+//  private String newData;
+  
+  //book.getAuthor().getName();
+//  private String authorName;
   private Long authorId;
 }

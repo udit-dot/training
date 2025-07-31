@@ -1,9 +1,14 @@
 package com.tcg.training.controller.example;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.modelmapper.ModelMapper;
+import org.modelmapper.convention.MatchingStrategies;
+import org.modelmapper.convention.NameTokenizers;
+import org.modelmapper.spi.NameTokenizer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -21,6 +26,7 @@ import com.tcg.training.dto.example.AuthorBookCollectionDto;
 import com.tcg.training.dto.example.AuthorBookResultSetDto;
 import com.tcg.training.dto.example.AuthorDto;
 import com.tcg.training.dto.example.AuthorWithBooksDto;
+import com.tcg.training.dto.example.BookDto;
 import com.tcg.training.entity.example.Author;
 import com.tcg.training.entity.example.Book;
 import com.tcg.training.projection.example.AuthorBookView;
@@ -238,9 +244,19 @@ public class AuthorController {
 	public AuthorDto getAuthorDtoById(@PathVariable Long id) {
 		Author author = authorService.getAuthor(id);
 		ModelMapper modelMapper = new ModelMapper();
+//		configurations for dto mappings
+//		modelMapper.getConfiguration().setDestinationNameTokenizer(NameTokenizers.UNDERSCORE);
+//		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
 		AuthorDto dto = modelMapper.map(author, AuthorDto.class);
 		// Manually map book titles
+//		List<Book> books = author.getBooks();
+//		List<BookDto> bookDtoList = new ArrayList<>();
+//		for (Book book : books) {
+//			BookDto bookDto = modelMapper.map(book, BookDto.class);
+//			bookDtoList.add(bookDto);
+//		}
 		dto.setBookTitles(author.getBooks().stream().map(Book::getTitle).toList());
+//		dto.setBooks(bookDtoList);
 		return dto;
 	}
 }
